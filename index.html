@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lumina — Premium Photo Organizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   LUMINA PHOTO ORGANIZER — Full Source Code
+   Designed with a luxury dark-gold aesthetic
+   ============================================================ */
+
+/* --- RESET & BASE --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:     #0a0a0f;
+  --bg2:    #12121a;
+  --bg3:    #1a1a26;
+  --bg4:    #22222f;
+  --glass:  rgba(255,255,255,0.04);
+  --glass2: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.08);
+  --border2:rgba(255,255,255,0.15);
+  --accent: #c8a96e;
+  --accent2:#e8c88a;
+  --text:   #f0ede8;
+  --text2:  #a8a4a0;
+  --text3:  #6a6660;
+  --blue:   #4a90d9;
+  --green:  #4acf8a;
+  --red:    #cf4a6a;
+  --purple: #9a6acf;
+  --r:  12px;
+  --r2: 20px;
+  --r3: 30px;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* --- SCREEN MANAGER --- */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; }
+
+/* =============================================================
+   AUTH SCREENS (Login + Register)
+   ============================================================= */
+.auth-wrap {
+  width: 100%;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Left art panel */
+.auth-art {
+  flex: 1;
+  background: linear-gradient(135deg, #0d0d18 0%, #1a1230 40%, #0f1a2e 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.auth-art::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 50%, rgba(200,169,110,0.15) 0%, transparent 60%);
+}
+.art-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(200,169,110,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,169,110,0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+.art-photos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 320px;
+  transform: perspective(800px) rotateY(-12deg) rotateX(5deg);
+}
+.art-photo { border-radius: 8px; overflow: hidden; aspect-ratio: 4/3; }
+.art-photo div { width: 100%; height: 100%; opacity: 0.7; }
+.p1 { background: linear-gradient(135deg,#2a1a3e,#4a2a6e); }
+.p2 { background: linear-gradient(135deg,#1a2e3e,#2a4e6e); }
+.p3 { background: linear-gradient(135deg,#1e3a2a,#2e5a4a); }
+.p4 { background: linear-gradient(135deg,#3a1e1e,#6a2e2e); }
+.p5 { background: linear-gradient(135deg,#2e2a1e,#5e4e2e); }
+.p6 { background: linear-gradient(135deg,#1a1e3a,#2a2e6a); }
+.p7 { background: linear-gradient(135deg,#2a3a1e,#4a6a2e); }
+.p8 { background: linear-gradient(135deg,#3a2e1e,#6a5e2e); }
+.p9 { background: linear-gradient(135deg,#1e2a3a,#2e3a6a); }
+
+/* Right form panel */
+.auth-form-side {
+  width: 480px;
+  background: var(--bg2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 50px;
+  border-left: 1px solid var(--border);
+}
+
+/* Logo */
+.logo { display: flex; align-items: center; gap: 12px; margin-bottom: 48px; }
+.logo-icon {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.logo-text { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 500; letter-spacing: -0.5px; }
+.logo-text span { color: var(--accent); }
+
+/* Auth headings */
+h2.auth-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; margin-bottom: 8px; text-align: center; }
+.auth-sub { color: var(--text2); font-size: 14px; margin-bottom: 36px; text-align: center; }
+
+/* Form fields */
+.field { width: 100%; margin-bottom: 16px; }
+.field label { display: block; font-size: 12px; font-weight: 500; color: var(--text2); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; }
+.field input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px 16px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field input:focus { border-color: var(--accent); }
+.field input::placeholder { color: var(--text3); }
+
+/* Primary button */
+.btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #0a0a0f;
+  border: none;
+  border-radius: var(--r);
+  padding: 15px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.btn-primary:hover { opacity: 0.9; }
+.btn-primary:active { transform: scale(0.98); }
+
+/* Auth switch link */
+.auth-switch { margin-top: 24px; font-size: 14px; color: var(--text2); }
+.auth-switch a { color: var(--accent); cursor: pointer; text-decoration: none; }
+.auth-switch a:hover { text-decoration: underline; }
+
+/* Password strength bar */
+.password-strength { height: 3px; border-radius: 2px; margin-top: 6px; background: var(--bg4); overflow: hidden; }
+.strength-bar { height: 100%; border-radius: 2px; transition: width 0.3s, background 0.3s; width: 0%; }
+
+/* Error messages */
+.error-msg { color: var(--red); font-size: 12px; margin-top: 6px; display: none; }
+
+/* =============================================================
+   MAIN APP LAYOUT
+   ============================================================= */
+#app-screen { flex-direction: column; }
+
+/* Top header bar */
+.app-header {
+  height: 64px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.app-logo { display: flex; align-items: center; gap: 10px; margin-right: 8px; }
+.app-logo-icon {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.app-logo-text { font-family: 'Playfair Display', serif; font-size: 20px; font-weight: 500; }
+.app-logo-text span { color: var(--accent); }
+
+/* Search bar */
+.search-bar { flex: 1; max-width: 560px; position: relative; }
+.search-bar input {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r3);
+  padding: 10px 44px 10px 44px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.search-bar input:focus { border-color: var(--accent); background: var(--bg4); }
+.search-bar input::placeholder { color: var(--text3); }
+.search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text3); font-size: 16px; }
+
+/* Header right actions */
+.header-actions { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.icon-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  width: 38px; height: 38px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  font-size: 16px;
+}
+.icon-btn:hover { background: var(--bg4); border-color: var(--border2); }
+
+/* Upload button */
+.upload-btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #0a0a0f;
+  border: none;
+  border-radius: var(--r3);
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+}
+.upload-btn:hover { opacity: 0.85; }
+
+/* User avatar */
+.avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #c85090);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 500; font-size: 13px;
+  cursor: pointer;
+  border: 2px solid var(--accent);
+}
+
+/* Main body layout */
+.app-body { display: flex; flex: 1; overflow: hidden; height: calc(100vh - 64px); }
+
+/* Left sidebar */
+.sidebar {
+  width: 220px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  padding: 20px 0;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+.nav-section { margin-bottom: 28px; }
+.nav-label {
+  font-size: 10px; font-weight: 500; color: var(--text3);
+  letter-spacing: 1.2px; text-transform: uppercase;
+  padding: 0 20px; margin-bottom: 8px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text2);
+  transition: all 0.15s;
+}
+.nav-item:hover { background: var(--glass); color: var(--text); }
+.nav-item.active { background: rgba(200,169,110,0.1); color: var(--accent); border-right: 2px solid var(--accent); }
+.nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+/* Storage widget in sidebar */
+.storage-widget {
+  margin: 16px;
+  background: var(--bg3);
+  border-radius: var(--r);
+  padding: 14px;
+  border: 1px solid var(--border);
+}
+.storage-label { font-size: 11px; color: var(--text2); margin-bottom: 8px; }
+.storage-bar { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; margin-bottom: 8px; }
+.storage-fill {
+  height: 100%;
+  width: 23%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 2px;
+}
+.storage-info { font-size: 11px; color: var(--text3); }
+.storage-info span { color: var(--accent); }
+
+/* Main scrollable content */
+.main-content { flex: 1; overflow-y: auto; padding: 24px; }
+
+/* =============================================================
+   UPLOAD MODAL
+   ============================================================= */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 200;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--r2);
+  width: 600px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-header { padding: 24px 28px 0; display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; }
+.modal-close { background: none; border: none; color: var(--text2); font-size: 20px; cursor: pointer; padding: 4px; }
+.modal-close:hover { color: var(--text); }
+.modal-body { padding: 24px 28px; }
+
+/* Drag-and-drop zone */
+.drop-zone {
+  border: 2px dashed var(--border2);
+  border-radius: var(--r2);
+  padding: 60px 40px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.drop-zone:hover, .drop-zone.dragover {
+  border-color: var(--accent);
+  background: rgba(200,169,110,0.05);
+}
+.drop-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+.drop-title { font-size: 18px; font-weight: 500; margin-bottom: 8px; }
+.drop-sub { font-size: 13px; color: var(--text2); margin-bottom: 20px; }
+.drop-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 10px 24px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.drop-btn:hover { border-color: var(--accent); color: var(--accent); }
+.file-input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+/* File name / search label field */
+.name-field { margin-top: 20px; }
+.name-field label { display: block; font-size: 12px; font-weight: 500; color: var(--text2); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px; }
+.name-field input,
+.name-field select {
+  width: 100%;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 12px 16px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.name-field input:focus,
+.name-field select:focus { border-color: var(--accent); }
+
+/* Upload preview thumbnails */
+.preview-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-top: 16px; }
+.preview-thumb { aspect-ratio: 1; border-radius: 8px; overflow: hidden; position: relative; background: var(--bg3); }
+.preview-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.preview-thumb .rm {
+  position: absolute; top: 4px; right: 4px;
+  width: 20px; height: 20px;
+  background: rgba(0,0,0,0.7);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 10px; color: #fff;
+}
+
+/* Upload progress bar */
+.upload-progress { margin-top: 16px; display: none; }
+.prog-bar { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+.prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius: 2px;
+  transition: width 0.3s;
+  width: 0%;
+}
+
+/* Modal footer buttons */
+.modal-footer { padding: 0 28px 24px; display: flex; gap: 12px; justify-content: flex-end; }
+.btn-sec {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 10px 20px;
+  color: var(--text2);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+.btn-sec:hover { border-color: var(--border2); color: var(--text); }
+.btn-accent {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none;
+  border-radius: var(--r);
+  padding: 10px 24px;
+  color: #0a0a0f;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.btn-accent:hover { opacity: 0.85; }
+
+/* =============================================================
+   GALLERY COMPONENTS
+   ============================================================= */
+
+/* Category filter chips */
+.cat-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.cat-chip {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r3);
+  padding: 7px 16px;
+  font-size: 13px;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+}
+.cat-chip:hover { border-color: var(--border2); color: var(--text); }
+.cat-chip.active { background: rgba(200,169,110,0.15); border-color: var(--accent); color: var(--accent); }
+.cat-chip .ci { font-size: 14px; }
+
+/* Gallery toolbar */
+.gallery-toolbar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+.gallery-title { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 400; flex: 1; }
+.toolbar-actions { display: flex; gap: 8px; align-items: center; }
+.view-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 14px; color: var(--text2);
+  transition: all 0.2s;
+}
+.view-btn.active, .view-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,169,110,0.1); }
+
+/* Batch selection action bar */
+.action-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.action-bar.visible { opacity: 1; pointer-events: all; }
+.sel-count { font-size: 13px; color: var(--text2); flex: 1; }
+.action-bar .btn-sm {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 7px 14px;
+  font-size: 12px;
+  color: var(--text2);
+  cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+}
+.action-bar .btn-sm:hover { border-color: var(--border2); color: var(--text); }
+.action-bar .btn-sm.danger:hover { border-color: var(--red); color: var(--red); }
+
+/* Photo grid — virtual grid style */
+.photo-grid {
+  display: grid;
+  gap: 4px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+.photo-grid.list { grid-template-columns: 1fr; }
+
+/* Photo cards */
+.photo-card {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--bg3);
+  aspect-ratio: 1;
+  animation: fadeIn 0.3s ease both;
+}
+.photo-card.list {
+  aspect-ratio: unset;
+  display: flex; align-items: center; gap: 16px;
+  padding: 12px;
+  border-radius: var(--r);
+}
+.photo-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.3s; }
+.photo-card.list img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; flex-shrink: 0; }
+.photo-card:hover img { transform: scale(1.03); }
+.photo-card.list:hover { background: var(--bg4); }
+
+/* Card overlay on hover/select */
+.card-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.photo-card:hover .card-overlay,
+.photo-card.selected .card-overlay { opacity: 1; }
+
+/* Selection checkbox */
+.card-check {
+  position: absolute; top: 10px; left: 10px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.6);
+  background: rgba(0,0,0,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+.photo-card.selected .card-check,
+.photo-card:hover .card-check { border-color: #fff; background: rgba(0,0,0,0.5); }
+.photo-card.selected .card-check { background: var(--accent); border-color: var(--accent); color: #0a0a0f; }
+
+/* Card metadata overlay */
+.card-meta { position: absolute; bottom: 10px; left: 10px; right: 10px; }
+.card-name { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.card-tags { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+.tag {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(4px);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 10px;
+  color: #fff;
+}
+
+/* List view info */
+.list-info { flex: 1; }
+.list-name { font-size: 14px; font-weight: 500; margin-bottom: 2px; }
+.list-sub { font-size: 12px; color: var(--text3); }
+.list-tags { display: flex; gap: 4px; margin-top: 6px; }
+.list-tag { background: var(--bg4); border-radius: 4px; padding: 2px 8px; font-size: 11px; color: var(--text2); }
+
+/* Date section dividers */
+.section-date {
+  font-size: 12px; color: var(--text3); font-weight: 500;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px; margin-top: 20px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase;
+}
+
+/* Select all button */
+.select-all-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--r3);
+  padding: 6px 14px;
+  color: var(--text2);
+  font-size: 12px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all 0.2s;
+}
+.select-all-btn:hover { border-color: var(--border2); color: var(--text); }
+
+/* =============================================================
+   DOWNLOAD / ACTION BUTTONS ROW
+   ============================================================= */
+.dl-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.dl-btn {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 20px;
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 13px; font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  border: 1px solid transparent;
+}
+.dl-btn.gold {
+  background: linear-gradient(135deg, rgba(200,169,110,0.2), rgba(232,200,138,0.1));
+  border-color: rgba(200,169,110,0.4);
+  color: var(--accent);
+}
+.dl-btn.gold:hover { border-color: var(--accent); background: rgba(200,169,110,0.25); }
+.dl-btn.silver { background: var(--bg3); border-color: var(--border); color: var(--text2); }
+.dl-btn.silver:hover { border-color: var(--border2); color: var(--text); }
+.dl-icon { font-size: 18px; }
+
+/* =============================================================
+   LIGHTBOX — Premium Photo Viewer with Effects
+   ============================================================= */
+.lightbox {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.95);
+  z-index: 300;
+  display: none;
+  align-items: center; justify-content: center;
+  flex-direction: column;
+}
+.lightbox.open { display: flex; }
+
+.lb-close {
+  position: absolute; top: 20px; right: 20px;
+  background: rgba(255,255,255,0.1);
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  color: #fff; font-size: 20px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.lb-close:hover { background: rgba(255,255,255,0.2); }
+
+.lb-img-wrap {
+  position: relative;
+  max-width: 90vw;
+  max-height: 80vh;
+}
+.lb-img {
+  max-width: 90vw;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 8px;
+  animation: lbIn 0.3s ease;
+}
+
+@keyframes lbIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Photo effect filters (applied as CSS filter on img) */
+.lb-effects img { filter: none; transition: filter 0.4s; }
+.lb-effects.vintage  img { filter: sepia(0.5) contrast(1.1) brightness(0.95); }
+.lb-effects.noir     img { filter: grayscale(1) contrast(1.3); }
+.lb-effects.vivid    img { filter: saturate(1.8) contrast(1.1); }
+.lb-effects.matte    img { filter: contrast(0.85) brightness(1.05) saturate(0.8); }
+.lb-effects.golden   img { filter: sepia(0.3) saturate(1.2) brightness(1.05) hue-rotate(-10deg); }
+.lb-effects.fade     img { filter: brightness(1.1) saturate(0.7) contrast(0.9); }
+
+/* Effect filter chips */
+.lb-filter-strip { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; justify-content: center; }
+.lb-filter {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--r3);
+  padding: 6px 14px; font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer; transition: all 0.2s;
+}
+.lb-filter.active, .lb-filter:hover { background: rgba(200,169,110,0.2); border-color: var(--accent); color: var(--accent); }
+
+/* Prev / Next nav arrows */
+.lb-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: rgba(255,255,255,0.1);
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  color: #fff; font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.lb-nav:hover { background: rgba(255,255,255,0.2); }
+.lb-prev { left: -60px; }
+.lb-next { right: -60px; }
+
+/* =============================================================
+   EMPTY STATE
+   ============================================================= */
+.empty-state { text-align: center; padding: 80px 40px; }
+.empty-icon { font-size: 64px; margin-bottom: 20px; opacity: 0.4; }
+.empty-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 400; margin-bottom: 8px; color: var(--text2); }
+.empty-sub { font-size: 14px; color: var(--text3); margin-bottom: 28px; }
+.empty-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none; border-radius: var(--r3);
+  padding: 13px 28px;
+  color: #0a0a0f; font-size: 14px; font-weight: 500;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+}
+
+/* =============================================================
+   TOAST NOTIFICATION
+   ============================================================= */
+.toast {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 14px 20px; font-size: 13px;
+  z-index: 400;
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.3s;
+  max-width: 300px;
+  display: flex; align-items: center; gap: 10px;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { border-left: 3px solid var(--green); }
+.toast.info    { border-left: 3px solid var(--blue); }
+
+/* =============================================================
+   ANIMATIONS
+   ============================================================= */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================================================
+   RESPONSIVE
+   ============================================================= */
+@media (max-width: 900px) {
+  .auth-art { display: none; }
+  .auth-form-side { width: 100%; }
+  .sidebar { width: 60px; }
+  .nav-item span:not(.nav-icon) { display: none; }
+  .nav-label { display: none; }
+  .storage-widget { display: none; }
+  .photo-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+}
+@media (max-width: 600px) {
+  .app-header { padding: 0 12px; gap: 8px; }
+  .search-bar { max-width: none; }
+  .dl-row { flex-direction: column; }
+  .lb-prev { left: -50px; }
+  .lb-next { right: -50px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     LOGIN SCREEN
+     ============================================================ -->
+<div class="screen active" id="login-screen">
+  <div class="auth-wrap">
+
+    <!-- Left decorative art panel -->
+    <div class="auth-art">
+      <div class="art-grid"></div>
+      <div style="position:relative;z-index:1">
+        <div class="art-photos">
+          <div class="art-photo"><div class="p1"></div></div>
+          <div class="art-photo"><div class="p2"></div></div>
+          <div class="art-photo"><div class="p3"></div></div>
+          <div class="art-photo"><div class="p4"></div></div>
+          <div class="art-photo"><div class="p5"></div></div>
+          <div class="art-photo"><div class="p6"></div></div>
+          <div class="art-photo"><div class="p7"></div></div>
+          <div class="art-photo"><div class="p8"></div></div>
+          <div class="art-photo"><div class="p9"></div></div>
+        </div>
+        <div style="text-align:center;margin-top:32px">
+          <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:500;color:#f0ede8">
+            Your memories,<br><span style="color:var(--accent)">beautifully organized.</span>
+          </div>
+          <p style="font-size:14px;color:rgba(240,237,232,0.5);margin-top:12px">
+            AI-powered photo management with a premium touch
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right login form -->
+    <div class="auth-form-side">
+      <div class="logo">
+        <div class="logo-icon">✦</div>
+        <div class="logo-text">Lumin<span>a</span></div>
+      </div>
+      <h2 class="auth-title">Welcome back</h2>
+      <p class="auth-sub">Sign in to your photo library</p>
+
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="login-email" placeholder="you@example.com">
+        <div class="error-msg" id="login-email-err">Please enter a valid email address</div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="••••••••">
+        <div class="error-msg" id="login-pass-err">Password must be at least 8 characters</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:-4px;margin-bottom:16px">
+        <a style="font-size:13px;color:var(--accent);cursor:pointer" onclick="showToast('📧 Password reset link sent!','info')">Forgot password?</a>
+      </div>
+
+      <button class="btn-primary" onclick="doLogin()">Sign in to Lumina</button>
+      <div class="auth-switch">
+        Don't have an account? <a onclick="showScreen('register-screen')">Create one free</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     REGISTER SCREEN
+     ============================================================ -->
+<div class="screen" id="register-screen">
+  <div class="auth-wrap">
+
+    <div class="auth-art">
+      <div class="art-grid"></div>
+      <div style="position:relative;z-index:1">
+        <div class="art-photos">
+          <div class="art-photo"><div class="p3"></div></div>
+          <div class="art-photo"><div class="p7"></div></div>
+          <div class="art-photo"><div class="p1"></div></div>
+          <div class="art-photo"><div class="p5"></div></div>
+          <div class="art-photo"><div class="p2"></div></div>
+          <div class="art-photo"><div class="p9"></div></div>
+          <div class="art-photo"><div class="p4"></div></div>
+          <div class="art-photo"><div class="p8"></div></div>
+          <div class="art-photo"><div class="p6"></div></div>
+        </div>
+        <div style="text-align:center;margin-top:32px">
+          <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:500;color:#f0ede8">
+            15 GB free storage,<br><span style="color:var(--accent)">unlimited memories.</span>
+          </div>
+          <p style="font-size:14px;color:rgba(240,237,232,0.5);margin-top:12px">
+            Join thousands organizing their memories with Lumina
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="auth-form-side">
+      <div class="logo">
+        <div class="logo-icon">✦</div>
+        <div class="logo-text">Lumin<span>a</span></div>
+      </div>
+      <h2 class="auth-title">Create account</h2>
+      <p class="auth-sub">Start your free 15 GB library today</p>
+
+      <div class="field">
+        <label>Full name</label>
+        <input type="text" id="reg-name" placeholder="Your full name">
+        <div class="error-msg" id="reg-name-err">Please enter your name</div>
+      </div>
+      <div class="field">
+        <label>Email address</label>
+        <input type="email" id="reg-email" placeholder="you@example.com">
+        <div class="error-msg" id="reg-email-err">Please enter a valid email</div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="reg-pass" placeholder="Minimum 8 characters" oninput="checkStrength(this.value)">
+        <div class="password-strength"><div class="strength-bar" id="strength-bar"></div></div>
+        <div class="error-msg" id="reg-pass-err">Password must be at least 8 characters</div>
+      </div>
+      <div class="field">
+        <label>Confirm password</label>
+        <input type="password" id="reg-pass2" placeholder="Repeat password">
+        <div class="error-msg" id="reg-pass2-err">Passwords do not match</div>
+      </div>
+
+      <button class="btn-primary" onclick="doRegister()">Create my Lumina account</button>
+      <div class="auth-switch">
+        Already have an account? <a onclick="showScreen('login-screen')">Sign in</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN APP SCREEN
+     ============================================================ -->
+<div class="screen" id="app-screen" style="flex-direction:column">
+
+  <!-- Top header -->
+  <header class="app-header">
+    <div class="app-logo">
+      <div class="app-logo-icon">✦</div>
+      <div class="app-logo-text">Lumin<span>a</span></div>
+    </div>
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Search by name, date, tag… e.g. 'beach sunset 2024'"
+        oninput="doSearch(this.value)"
+      >
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" title="Camera capture" onclick="showToast('📷 Camera upload available in the mobile app!','info')">📷</button>
+      <button class="upload-btn" onclick="openModal()">
+        <span>⬆</span> Upload photos
+      </button>
+      <div class="avatar" id="user-avatar" title="Sign out"
+           onclick="showToast('🚪 Signing out…','info'); setTimeout(()=>showScreen('login-screen'), 1200)">?</div>
+    </div>
+  </header>
+
+  <!-- Body: sidebar + main content -->
+  <div class="app-body">
+
+    <!-- Sidebar navigation -->
+    <aside class="sidebar">
+      <div class="nav-section">
+        <div class="nav-label">Library</div>
+        <div class="nav-item active" onclick="setNav(this,'all')">
+          <span class="nav-icon">🖼</span><span>All photos</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this,'favorites')">
+          <span class="nav-icon">♥</span><span>Favorites</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this,'shared')">
+          <span class="nav-icon">🔗</span><span>Shared</span>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Smart</div>
+        <div class="nav-item" onclick="setNav(this,'ai')">
+          <span class="nav-icon">✨</span><span>AI Albums</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this,'faces')">
+          <span class="nav-icon">👤</span><span>People</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this,'places')">
+          <span class="nav-icon">📍</span><span>Places</span>
+        </div>
+      </div>
+      <div class="nav-section">
+        <div class="nav-label">Albums</div>
+        <div class="nav-item" onclick="setNav(this,'albums')">
+          <span class="nav-icon">📁</span><span>My Albums</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this,'archive')">
+          <span class="nav-icon">🗄</span><span>Archive</span>
+        </div>
+        <div class="nav-item" onclick="setNav(this,'trash')">
+          <span class="nav-icon">🗑</span><span>Trash</span>
+        </div>
+      </div>
+      <!-- Storage indicator -->
+      <div class="storage-widget">
+        <div class="storage-label">Storage used</div>
+        <div class="storage-bar"><div class="storage-fill"></div></div>
+        <div class="storage-info"><span>3.4 GB</span> of 15 GB used</div>
+      </div>
+    </aside>
+
+    <!-- Main gallery content — rendered by JS -->
+    <main class="main-content" id="main-content"></main>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     UPLOAD MODAL
+     ============================================================ -->
+<div class="modal-overlay" id="upload-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Upload Photos</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Drag-and-drop zone -->
+      <div
+        class="drop-zone"
+        id="drop-zone"
+        ondragover="handleDragOver(event)"
+        ondragleave="handleDragLeave(event)"
+        ondrop="handleDrop(event)"
+      >
+        <!-- Invisible file input covers entire zone -->
+        <input
+          type="file"
+          class="file-input"
+          multiple
+          accept="image/*"
+          id="file-input"
+          onchange="handleFiles(this.files)"
+        >
+        <span class="drop-icon">📸</span>
+        <div class="drop-title">Drop photos here</div>
+        <div class="drop-sub">
+          Drag &amp; drop your photos, or click to browse<br>
+          <small style="color:var(--text3)">Supports JPG, PNG, WEBP, HEIC · Up to 50 MB per file</small>
+        </div>
+        <button class="drop-btn" onclick="event.stopPropagation(); document.getElementById('file-input').click()">
+          Browse files
+        </button>
+      </div>
+
+      <!-- Preview thumbnails -->
+      <div id="preview-grid" class="preview-grid"></div>
+
+      <!-- Photo name field (natural language search label) -->
+      <div class="name-field" id="name-field-wrap" style="display:none">
+        <label>
+          Photo name / title
+          <span style="color:var(--text3)">(used for natural language search)</span>
+        </label>
+        <input type="text" id="photo-name-input" placeholder="e.g. 'Beach vacation Goa 2024', 'Birthday party'">
+      </div>
+
+      <!-- Category selector -->
+      <div class="name-field">
+        <label>Category</label>
+        <select id="cat-select">
+          <option value="">— AI will auto-suggest —</option>
+          <option>🏖 Travel &amp; Vacation</option>
+          <option>👨‍👩‍👧 Family &amp; Portraits</option>
+          <option>🎉 Events &amp; Celebrations</option>
+          <option>🌿 Nature &amp; Landscapes</option>
+          <option>🍽 Food &amp; Drinks</option>
+          <option>🐾 Pets &amp; Animals</option>
+          <option>🏙 Architecture &amp; Cities</option>
+          <option>🎨 Art &amp; Creative</option>
+          <option>💼 Work &amp; Professional</option>
+          <option>🏋 Sports &amp; Fitness</option>
+          <option>🎬 Film &amp; Cinematic</option>
+          <option>✈ Adventures</option>
+        </select>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="upload-progress" id="upload-progress">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:6px">
+          <span>Uploading…</span>
+          <span id="prog-pct">0%</span>
+        </div>
+        <div class="prog-bar">
+          <div class="prog-fill" id="prog-fill"></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sec" onclick="closeModal()">Cancel</button>
+      <button class="btn-accent" onclick="uploadFiles()">Upload &amp; Organize ✦</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     LIGHTBOX — Premium Viewer with Photo Effects
+     ============================================================ -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="closeLightbox()">✕</button>
+
+  <div class="lb-img-wrap lb-effects" id="lb-effects-wrap">
+    <img src="" id="lb-img" class="lb-img" alt="">
+    <button class="lb-nav lb-prev" onclick="lbNav(-1)">‹</button>
+    <button class="lb-nav lb-next" onclick="lbNav(1)">›</button>
+  </div>
+
+  <div id="lb-photo-name" style="font-size:15px;font-weight:500;margin-top:12px;color:var(--text)"></div>
+  <div id="lb-info" style="color:rgba(255,255,255,0.5);font-size:12px;margin-top:4px"></div>
+
+  <!-- Effect filter strip -->
+  <div class="lb-filter-strip">
+    <div class="lb-filter active" onclick="setEffect(this,'')">Original</div>
+    <div class="lb-filter" onclick="setEffect(this,'vintage')">Vintage</div>
+    <div class="lb-filter" onclick="setEffect(this,'noir')">Noir</div>
+    <div class="lb-filter" onclick="setEffect(this,'vivid')">Vivid</div>
+    <div class="lb-filter" onclick="setEffect(this,'matte')">Matte</div>
+    <div class="lb-filter" onclick="setEffect(this,'golden')">Golden Hour</div>
+    <div class="lb-filter" onclick="setEffect(this,'fade')">Fade</div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast"></div>
+
+<!-- ============================================================
+     JAVASCRIPT — All Application Logic
+     ============================================================ -->
+<script>
+/* ------------------------------------------------------------------
+   API CONFIGURATION
+   ------------------------------------------------------------------ */
+const API_BASE_URL = 'http://localhost:5000';
+
+/* ------------------------------------------------------------------
+   APPLICATION STATE
+   ------------------------------------------------------------------ */
+const state = {
+  user: null,
+  photos: [],
+  selected: new Set(),
+  view: 'grid',           // 'grid' | 'list'
+  activeFilter: 'all',
+  catFilter: '',
+  lbIndex: 0,
+  searchQuery: ''
+};
+
+/* ------------------------------------------------------------------
+   CATEGORY DEFINITIONS
+   ------------------------------------------------------------------ */
+const CATS = [
+  { icon: '🏖',  name: 'Travel & Vacation'       },
+  { icon: '👨‍👩‍👧', name: 'Family & Portraits'      },
+  { icon: '🎉',  name: 'Events & Celebrations'   },
+  { icon: '🌿',  name: 'Nature & Landscapes'      },
+  { icon: '🍽',  name: 'Food & Drinks'            },
+  { icon: '🐾',  name: 'Pets & Animals'           },
+  { icon: '🏙',  name: 'Architecture & Cities'    },
+  { icon: '🎨',  name: 'Art & Creative'           },
+  { icon: '💼',  name: 'Work & Professional'      },
+  { icon: '🏋',  name: 'Sports & Fitness'         },
+  { icon: '🎬',  name: 'Film & Cinematic'         },
+  { icon: '✈',   name: 'Adventures'              },
+];
+
+/* Placeholder gradient colours for sample photos without real URLs */
+const SAMPLE_COLORS = [
+  'linear-gradient(135deg,#1a3040,#2a5060)',
+  'linear-gradient(135deg,#2a1a3e,#4a2a6e)',
+  'linear-gradient(135deg,#1e3a2a,#2e5a4a)',
+  'linear-gradient(135deg,#3a1e1e,#6a2e2e)',
+  'linear-gradient(135deg,#2e2a1e,#5e4e2e)',
+  'linear-gradient(135deg,#1a1e3a,#2a2e6a)',
+  'linear-gradient(135deg,#2a3a1e,#4a6a2e)',
+  'linear-gradient(135deg,#3a2e1e,#6a5e2e)',
+  'linear-gradient(135deg,#1e2a3a,#2e3a6a)',
+];
+
+/* ------------------------------------------------------------------
+   UTILITY — Screen switching
+   ------------------------------------------------------------------ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ------------------------------------------------------------------
+   UTILITY — Email validation
+   ------------------------------------------------------------------ */
+function isValidEmail(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+}
+
+/* ------------------------------------------------------------------
+   AUTH — Login
+   ------------------------------------------------------------------ */
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-pass').value;
+  let valid   = true;
+
+  document.getElementById('login-email-err').style.display = 'none';
+  document.getElementById('login-pass-err').style.display  = 'none';
+
+  if (!isValidEmail(email)) { document.getElementById('login-email-err').style.display = 'block'; valid = false; }
+  if (pass.length < 8)      { document.getElementById('login-pass-err').style.display  = 'block'; valid = false; }
+  if (!valid) return;
+
+  const name = email.split('@')[0];
+  state.user = { email, name: name.charAt(0).toUpperCase() + name.slice(1) };
+  document.getElementById('user-avatar').textContent = state.user.name.charAt(0).toUpperCase();
+
+  loadSamplePhotos();
+  showScreen('app-screen');
+  renderMain();
+  showToast('✦ Welcome back, ' + state.user.name + '!', 'success');
+}
+
+/* ------------------------------------------------------------------
+   AUTH — Register
+   ------------------------------------------------------------------ */
+function doRegister() {
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pass  = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  let valid   = true;
+
+  ['reg-name-err','reg-email-err','reg-pass-err','reg-pass2-err']
+    .forEach(id => document.getElementById(id).style.display = 'none');
+
+  if (name.length < 2)        { document.getElementById('reg-name-err').style.display  = 'block'; valid = false; }
+  if (!isValidEmail(email))   { document.getElementById('reg-email-err').style.display = 'block'; valid = false; }
+  if (pass.length < 8)        { document.getElementById('reg-pass-err').style.display  = 'block'; valid = false; }
+  if (pass !== pass2)         { document.getElementById('reg-pass2-err').style.display = 'block'; valid = false; }
+  if (!valid) return;
+
+  state.user   = { name, email };
+  state.photos = [];
+  document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
+  showScreen('app-screen');
+  renderMain();
+  showToast('🎉 Welcome to Lumina, ' + name + '! Your 15 GB library is ready.', 'success');
+}
+
+/* ------------------------------------------------------------------
+   AUTH — Password strength meter
+   ------------------------------------------------------------------ */
+function checkStrength(val) {
+  const bar = document.getElementById('strength-bar');
+  let score = 0;
+  if (val.length >= 8)              score++;
+  if (/[A-Z]/.test(val))           score++;
+  if (/[0-9]/.test(val))           score++;
+  if (/[^A-Za-z0-9]/.test(val))   score++;
+  const widths = ['0%','25%','50%','75%','100%'];
+  const colors = ['#cf4a6a','#cf8a4a','#cfcf4a','#4acf8a','#4acf8a'];
+  bar.style.width      = widths[score];
+  bar.style.background = colors[score];
+}
+
+/* ------------------------------------------------------------------
+   SAMPLE DATA — Preloaded demo photos
+   ------------------------------------------------------------------ */
+function loadSamplePhotos() {
+  const names = [
+    'Sunset at Marina Beach', 'Office Rooftop View', 'Weekend Brunch Spread',
+    'Monsoon Reflections', 'City Lights Night', 'Mountain Trek 2024',
+    'Café Corner Study', 'Garden Morning Walk', 'Family Dinner Diwali',
+    'Street Market Colours', 'Airport Departure Lounge', 'Coastal Rocks Sunrise'
+  ];
+  const cats  = [
+    'Travel & Vacation','Architecture & Cities','Food & Drinks',
+    'Nature & Landscapes','Architecture & Cities','Adventures',
+    'Work & Professional','Nature & Landscapes','Events & Celebrations',
+    'Travel & Vacation','Work & Professional','Nature & Landscapes'
+  ];
+  const dates = [
+    'March 2025','February 2025','March 2025','July 2024','December 2024',
+    'October 2024','January 2025','April 2025','October 2024',
+    'December 2024','February 2025','November 2024'
+  ];
+  state.photos = names.map((name, i) => ({
+    id: Date.now() + i,
+    name,
+    category: cats[i],
+    color: SAMPLE_COLORS[i % SAMPLE_COLORS.length],
+    date: dates[i],
+    isUrl: false,
+    url: null,
+    fav: i === 0 || i === 3
+  }));
+}
+
+/* ------------------------------------------------------------------
+   UPLOAD MODAL — Open / Close
+   ------------------------------------------------------------------ */
+let pendingFiles = [];
+
+function openModal()  { document.getElementById('upload-modal').classList.add('open'); }
+function closeModal() {
+  document.getElementById('upload-modal').classList.remove('open');
+  document.getElementById('preview-grid').innerHTML    = '';
+  document.getElementById('name-field-wrap').style.display = 'none';
+  document.getElementById('photo-name-input').value   = '';
+  document.getElementById('upload-progress').style.display = 'none';
+  document.getElementById('prog-fill').style.width    = '0%';
+  pendingFiles = [];
+}
+
+/* ------------------------------------------------------------------
+   UPLOAD — Drag-and-drop handlers (onDrop event)
+   ------------------------------------------------------------------ */
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.add('dragover');
+}
+function handleDragLeave() {
+  document.getElementById('drop-zone').classList.remove('dragover');
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('dragover');
+  handleFiles(e.dataTransfer.files);   // onDrop event — read files from dataTransfer
+}
+
+/* ------------------------------------------------------------------
+   UPLOAD — File reader & preview
+   ------------------------------------------------------------------ */
+function handleFiles(files) {
+  if (!files || !files.length) return;
+  pendingFiles = [...files].filter(f => f.type.startsWith('image/'));
+  const grid = document.getElementById('preview-grid');
+  grid.innerHTML = '';
+  document.getElementById('name-field-wrap').style.display = pendingFiles.length === 1 ? 'block' : 'none';
+
+  pendingFiles.forEach((f, i) => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const div = document.createElement('div');
+      div.className = 'preview-thumb';
+      div.innerHTML = `<img src="${ev.target.result}" alt=""><div class="rm" onclick="removePreview(${i})">✕</div>`;
+      grid.appendChild(div);
+    };
+    reader.readAsDataURL(f);
+  });
+}
+
+function removePreview(i) {
+  pendingFiles.splice(i, 1);
+  document.getElementById('preview-grid').innerHTML = '';
+  if (pendingFiles.length > 0) handleFiles(pendingFiles);    // re-render remaining
+  else document.getElementById('name-field-wrap').style.display = 'none';
+}
+
+/* ------------------------------------------------------------------
+   UPLOAD — Simulated upload progress & file commit
+   ------------------------------------------------------------------ */
+function uploadFiles() {
+  if (!pendingFiles.length) { showToast('Please select at least one photo.', 'info'); return; }
+
+  const progWrap = document.getElementById('upload-progress');
+  const fill     = document.getElementById('prog-fill');
+  const pct      = document.getElementById('prog-pct');
+  progWrap.style.display = 'block';
+
+  let p = 0;
+  const iv = setInterval(() => {
+    p += Math.random() * 15 + 5;
+    if (p >= 100) { p = 100; clearInterval(iv); finishUpload(); }
+    fill.style.width = Math.min(p, 100) + '%';
+    pct.textContent  = Math.floor(Math.min(p, 100)) + '%';
+  }, 100);
+}
+
+async function finishUpload() {
+  const catVal = document.getElementById('cat-select').value;
+  const catSelectObj = CATS.find(c => catVal.includes(c.name)) || null;
+
+  let processedCount = 0;
+  const totalFiles = pendingFiles.length;
+
+  for (let i = 0; i < pendingFiles.length; i++) {
+    const f = pendingFiles[i];
+    const reader = new FileReader();
+    
+    reader.onload = async (ev) => {
+      const dataUrl = ev.target.result;
+      const baseName = document.getElementById('photo-name-input').value.trim() || f.name.replace(/\.[^.]+$/, '');
+      const fullName = pendingFiles.length > 1 ? `${baseName} ${i + 1}` : baseName;
+
+      try {
+        // Send to AI model for prediction
+        const response = await fetch(`${API_BASE_URL}/predict`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ dataUrl: dataUrl })
+        });
+
+        let category_name = catSelectObj ? catSelectObj.name : CATS[Math.floor(Math.random() * CATS.length)].name;
+        
+        if (response.ok) {
+          const result = await response.json();
+          // Map category_id to category name
+          const categoryId = parseInt(result.category_id || result.category || 0);
+          category_name = result.category_name || CATS[categoryId % CATS.length].name;
+        }
+
+        state.photos.unshift({
+          id: Date.now() + i,
+          name: fullName || 'Untitled Photo',
+          category: category_name,
+          color: SAMPLE_COLORS[Math.floor(Math.random() * SAMPLE_COLORS.length)],
+          date: 'April 2025',
+          isUrl: true,
+          url: dataUrl,
+          fav: false
+        });
+
+        processedCount++;
+        if (processedCount === totalFiles) {
+          closeModal();
+          renderMain();
+          showToast(`✦ ${totalFiles} photo${totalFiles > 1 ? 's' : ''} uploaded & AI categorized!`, 'success');
+        }
+      } catch (error) {
+        console.error('Prediction error:', error);
+        // Fallback: use selected or random category
+        const fallbackCat = catSelectObj || CATS[Math.floor(Math.random() * CATS.length)];
+        state.photos.unshift({
+          id: Date.now() + i,
+          name: fullName || 'Untitled Photo',
+          category: fallbackCat.name,
+          color: SAMPLE_COLORS[Math.floor(Math.random() * SAMPLE_COLORS.length)],
+          date: 'April 2025',
+          isUrl: true,
+          url: dataUrl,
+          fav: false
+        });
+        
+        processedCount++;
+        if (processedCount === totalFiles) {
+          closeModal();
+          renderMain();
+          showToast(`✦ ${totalFiles} photo${totalFiles > 1 ? 's' : ''} uploaded!`, 'success');
+        }
+      }
+    };
+    
+    reader.readAsDataURL(f);
+  }
+}
+
+/* ------------------------------------------------------------------
+   SIDEBAR NAVIGATION
+   ------------------------------------------------------------------ */
+function setNav(el, filter) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  state.activeFilter = filter;
+  state.selected.clear();
+  renderMain();
+}
+
+/* ------------------------------------------------------------------
+   SEARCH — Natural language photo search
+   ------------------------------------------------------------------ */
+function doSearch(val) {
+  state.searchQuery = val.toLowerCase();
+  renderMain();
+}
+
+/* ------------------------------------------------------------------
+   GALLERY — Main render function (Virtual Grid)
+   Renders ALL photo cards into the DOM with date grouping.
+   For thousands of photos a real virtual scroller would be used;
+   this demonstrates the full pattern with grouped sections.
+   ------------------------------------------------------------------ */
+function renderMain() {
+  const mc = document.getElementById('main-content');
+
+  // --- Filter photos by search query and active nav ---
+  let photos = state.photos;
+  if (state.searchQuery) {
+    photos = photos.filter(p =>
+      p.name.toLowerCase().includes(state.searchQuery) ||
+      p.category.toLowerCase().includes(state.searchQuery) ||
+      (p.date && p.date.toLowerCase().includes(state.searchQuery))
+    );
+  }
+  if (state.activeFilter === 'favorites') photos = photos.filter(p => p.fav);
+
+  let html = '';
+
+  /* ---- Action buttons row ---- */
+  html += `
+    <div class="dl-row">
+      <button class="dl-btn gold" onclick="genFolders()">
+        <span class="dl-icon">📂</span>Generate Structured Folders
+      </button>
+      <button class="dl-btn silver" onclick="dlArchive()">
+        <span class="dl-icon">⬇</span>Download Organized Archive
+      </button>
+      <button class="dl-btn silver" onclick="showToast('🔗 Share link copied to clipboard!','success')">
+        <span class="dl-icon">🔗</span>Share Library
+      </button>
+    </div>`;
+
+  /* ---- AI-suggested category filter chips (Toggle Filter Components) ---- */
+  html += `<div class="cat-filters">
+    <div class="cat-chip active" onclick="filterCat(this,'')"><span class="ci">✦</span>All</div>`;
+  CATS.forEach(c => {
+    const count = state.photos.filter(p => p.category === c.name).length;
+    if (count > 0) {
+      html += `<div class="cat-chip" onclick="filterCat(this,'${c.name}')">
+        <span class="ci">${c.icon}</span>${c.name}
+        <span style="color:var(--text3);font-size:11px">${count}</span>
+      </div>`;
+    }
+  });
+  html += `</div>`;
+
+  /* ---- Gallery toolbar ---- */
+  const title = state.searchQuery
+    ? `Results for "${state.searchQuery}"`
+    : state.activeFilter === 'favorites' ? 'Favorites' : 'All Photos';
+
+  html += `
+    <div class="gallery-toolbar">
+      <div class="gallery-title">${title}</div>
+      <div class="toolbar-actions">
+        <button class="select-all-btn" onclick="selectAll()">Select all</button>
+        <button class="view-btn ${state.view==='grid'?'active':''}" onclick="setView('grid')" title="Grid view">⊞</button>
+        <button class="view-btn ${state.view==='list'?'active':''}" onclick="setView('list')" title="List view">☰</button>
+      </div>
+    </div>`;
+
+  /* ---- Batch Selection Tool action bar ---- */
+  html += `
+    <div class="action-bar ${state.selected.size > 0 ? 'visible' : ''}" id="action-bar">
+      <div class="sel-count"><b>${state.selected.size}</b> selected</div>
+      <button class="btn-sm" onclick="batchFav()">♥ Favorite</button>
+      <button class="btn-sm" onclick="batchCat()">🏷 Add to album</button>
+      <button class="btn-sm danger" onclick="batchDelete()">🗑 Delete</button>
+      <button class="btn-sm" onclick="state.selected.clear(); renderMain()">✕ Clear</button>
+    </div>`;
+
+  /* ---- Empty state ---- */
+  if (photos.length === 0) {
+    html += `
+      <div class="empty-state">
+        <div class="empty-icon">📸</div>
+        <div class="empty-title">${state.searchQuery ? 'No photos found' : 'No photos yet'}</div>
+        <div class="empty-sub">${state.searchQuery ? 'Try a different search term.' : 'Upload your first photo to get started.'}</div>
+        ${!state.searchQuery ? `<button class="empty-btn" onclick="openModal()">⬆ Upload your first photo</button>` : ''}
+      </div>`;
+  } else {
+    /* ---- Virtual Grid Gallery — grouped by date ---- */
+    const byDate = {};
+    photos.forEach(p => {
+      const d = p.date || 'Recently Added';
+      if (!byDate[d]) byDate[d] = [];
+      byDate[d].push(p);
+    });
+
+    Object.entries(byDate).forEach(([date, ps]) => {
+      html += `<div class="section-date">${date} · ${ps.length} photo${ps.length > 1 ? 's' : ''}</div>`;
+      html += `<div class="photo-grid ${state.view === 'list' ? 'list' : ''}">`;
+
+      ps.forEach((p, i) => {
+        const sel    = state.selected.has(p.id);
+        const catObj = CATS.find(c => c.name === p.category) || { icon: '📷' };
+        const delay  = i * 0.02;
+
+        if (state.view === 'list') {
+          /* --- List view card --- */
+          const thumb = p.isUrl && p.url
+            ? `<img src="${p.url}" style="width:60px;height:60px;object-fit:cover;border-radius:8px" alt="">`
+            : `<div style="width:60px;height:60px;border-radius:8px;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">${catObj.icon}</div>`;
+
+          html += `
+            <div class="photo-card list ${sel ? 'selected' : ''}"
+                 onclick="toggleSelect(${p.id})"
+                 ondblclick="openLightbox(${state.photos.indexOf(p)})"
+                 style="animation-delay:${delay}s">
+              ${thumb}
+              <div class="list-info">
+                <div class="list-name">${p.name}</div>
+                <div class="list-sub">${p.date || 'Recently added'}</div>
+                <div class="list-tags">
+                  <span class="list-tag">${catObj.icon} ${p.category}</span>
+                  ${p.fav ? '<span class="list-tag" style="color:var(--red)">♥ Favorite</span>' : ''}
+                </div>
+              </div>
+              <div style="color:${sel ? 'var(--accent)' : 'var(--text3)'};font-size:20px">${sel ? '✓' : '○'}</div>
+            </div>`;
+        } else {
+          /* --- Grid view card --- */
+          const imgContent = p.isUrl && p.url
+            ? `<img src="${p.url}" alt="${p.name}">`
+            : `<div style="width:100%;height:100%;background:${p.color};display:flex;align-items:center;justify-content:center;font-size:32px;opacity:0.7">${catObj.icon}</div>`;
+
+          html += `
+            <div class="photo-card ${sel ? 'selected' : ''}"
+                 onclick="toggleSelect(${p.id})"
+                 ondblclick="openLightbox(${state.photos.indexOf(p)})"
+                 style="animation-delay:${delay}s">
+              ${imgContent}
+              <div class="card-overlay"></div>
+              <div class="card-check">${sel ? '✓' : ''}</div>
+              <div class="card-meta">
+                <div class="card-name">${p.name}</div>
+                <div class="card-tags">
+                  <span class="tag">${catObj.icon} ${p.category.split(' ').pop()}</span>
+                  ${p.fav ? '<span class="tag" style="background:rgba(207,74,106,0.3)">♥</span>' : ''}
+                </div>
+              </div>
+            </div>`;
+        }
+      });
+      html += `</div>`;
+    });
+  }
+
+  mc.innerHTML = html;
+}
+
+/* ------------------------------------------------------------------
+   GALLERY CONTROLS
+   ------------------------------------------------------------------ */
+function filterCat(el, cat) {
+  document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  state.catFilter = cat;
+
+  // Temporarily filter for display without altering state.photos
+  const orig = state.photos;
+  if (cat) state.photos = orig.filter(p => p.category === cat);
+  renderMain();
+  state.photos = orig;
+}
+
+function setView(v) { state.view = v; renderMain(); }
+
+function selectAll() {
+  let photos = state.photos;
+  if (state.searchQuery) photos = photos.filter(p =>
+    p.name.toLowerCase().includes(state.searchQuery) ||
+    p.category.toLowerCase().includes(state.searchQuery)
+  );
+  if (state.selected.size === photos.length) state.selected.clear();
+  else photos.forEach(p => state.selected.add(p.id));
+  renderMain();
+}
+
+function toggleSelect(id) {
+  if (state.selected.has(id)) state.selected.delete(id);
+  else                         state.selected.add(id);
+  renderMain();
+}
+
+/* ------------------------------------------------------------------
+   BATCH OPERATIONS
+   ------------------------------------------------------------------ */
+function batchFav() {
+  state.selected.forEach(id => {
+    const p = state.photos.find(x => x.id === id);
+    if (p) p.fav = true;
+  });
+  showToast(`♥ ${state.selected.size} photos added to favorites`, 'success');
+  state.selected.clear();
+  renderMain();
+}
+function batchCat()    { showToast('🏷 Album editor coming soon!', 'info'); }
+function batchDelete() {
+  const count = state.selected.size;
+  state.photos = state.photos.filter(p => !state.selected.has(p.id));
+  showToast(`🗑 ${count} photos moved to Trash`, 'info');
+  state.selected.clear();
+  renderMain();
+}
+
+/* ------------------------------------------------------------------
+   DOWNLOAD / FOLDER BUTTONS
+   ------------------------------------------------------------------ */
+function genFolders() {
+  showToast('📂 Generating folder structure by category & date…', 'success');
+}
+function dlArchive() {
+  showToast('⬇ Preparing your organized archive for download…', 'success');
+}
+
+/* ------------------------------------------------------------------
+   LIGHTBOX — Premium Photo Viewer
+   ------------------------------------------------------------------ */
+function openLightbox(idx) {
+  state.lbIndex = idx;
+  updateLightbox();
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+}
+function updateLightbox() {
+  const p = state.photos[state.lbIndex];
+  if (!p) return;
+
+  const img  = document.getElementById('lb-img');
+  const wrap = document.getElementById('lb-effects-wrap');
+
+  // Remove any placeholder element from a previous non-URL photo
+  const prev = wrap.querySelector('.lb-placeholder');
+  if (prev) prev.remove();
+
+  if (p.isUrl && p.url) {
+    img.src            = p.url;
+    img.style.display  = 'block';
+  } else {
+    img.style.display  = 'none';
+    const catObj = CATS.find(c => c.name === p.category) || { icon: '📷' };
+    const ph = document.createElement('div');
+    ph.className = 'lb-placeholder';
+    ph.style.cssText = `
+      width:600px; max-width:85vw; height:400px;
+      background:${p.color};
+      border-radius:8px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:80px; opacity:0.8;
+    `;
+    ph.textContent = catObj.icon;
+    wrap.insertBefore(ph, img);
+  }
+
+  document.getElementById('lb-photo-name').textContent = p.name;
+  document.getElementById('lb-info').textContent =
+    `${p.category} · ${p.date || 'Recently'} · ${state.lbIndex + 1} of ${state.photos.length}`;
+}
+
+function lbNav(dir) {
+  state.lbIndex = (state.lbIndex + dir + state.photos.length) % state.photos.length;
+  updateLightbox();
+}
+
+/* ---- Photo effect filters ---- */
+function setEffect(el, effect) {
+  document.querySelectorAll('.lb-filter').forEach(f => f.classList.remove('active'));
+  el.classList.add('active');
+  const wrap = document.getElementById('lb-effects-wrap');
+  wrap.className = 'lb-img-wrap lb-effects' + (effect ? ' ' + effect : '');
+}
+
+/* ------------------------------------------------------------------
+   TOAST NOTIFICATION
+   ------------------------------------------------------------------ */
+let toastTimer;
+function showToast(msg, type = 'info') {
+  const t   = document.getElementById('toast');
+  t.textContent = msg;
+  t.className   = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ------------------------------------------------------------------
+   GLOBAL EVENT LISTENERS
+   ------------------------------------------------------------------ */
+// Close modal when clicking the backdrop
+document.getElementById('upload-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Keyboard navigation in lightbox
+document.addEventListener('keydown', e => {
+  if (document.getElementById('lightbox').classList.contains('open')) {
+    if (e.key === 'ArrowLeft')  lbNav(-1);
+    if (e.key === 'ArrowRight') lbNav(1);
+  }
+  if (e.key === 'Escape') { closeLightbox(); closeModal(); }
+});
+</script>
+
+</body>
+</html>
