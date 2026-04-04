@@ -1,5 +1,4 @@
 joblib
-base64
 flask
 torch
 torchvision
