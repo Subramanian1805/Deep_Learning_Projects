@@ -1,7 +1,6 @@
 Flask
 joblib
 torch
-PIL
 io
 base64
 numpy
