@@ -1,7 +1,10 @@
-Flask
 joblib
-torch
-io
 base64
-numpy
+flask
+torch
+torchvision
+facenet-pytorch
+opencv-python
 pillow
+numpy
+scikit-learn
