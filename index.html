@@ -3,13 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lumina — Premium Photo Organizer</title>
+<title>Ninaivugal — Premium Photo Organizer</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-/* ============================================================
-   LUMINA PHOTO ORGANIZER — Full Source Code
-   Designed with a luxury dark-gold aesthetic
-   ============================================================ */
 
 /* --- RESET & BASE --- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -838,7 +834,7 @@ h2.auth-title { font-family: 'Playfair Display', serif; font-size: 28px; font-we
         <a style="font-size:13px;color:var(--accent);cursor:pointer" onclick="showToast('📧 Password reset link sent!','info')">Forgot password?</a>
       </div>
 
-      <button class="btn-primary" onclick="doLogin()">Sign in to Lumina</button>
+      <button class="btn-primary" onclick="doLogin()">Sign in to Ninaivugal</button>
       <div class="auth-switch">
         Don't have an account? <a onclick="showScreen('register-screen')">Create one free</a>
       </div>
@@ -872,7 +868,7 @@ h2.auth-title { font-family: 'Playfair Display', serif; font-size: 28px; font-we
             15 GB free storage,<br><span style="color:var(--accent)">unlimited memories.</span>
           </div>
           <p style="font-size:14px;color:rgba(240,237,232,0.5);margin-top:12px">
-            Join thousands organizing their memories with Lumina
+            Join thousands organizing their memories with Ninaivugal
           </p>
         </div>
       </div>
@@ -908,7 +904,7 @@ h2.auth-title { font-family: 'Playfair Display', serif; font-size: 28px; font-we
         <div class="error-msg" id="reg-pass2-err">Passwords do not match</div>
       </div>
 
-      <button class="btn-primary" onclick="doRegister()">Create my Lumina account</button>
+      <button class="btn-primary" onclick="doRegister()">Create my Ninaivugal account</button>
       <div class="auth-switch">
         Already have an account? <a onclick="showScreen('login-screen')">Sign in</a>
       </div>
@@ -1240,7 +1236,7 @@ function doRegister() {
   document.getElementById('user-avatar').textContent = name.charAt(0).toUpperCase();
   showScreen('app-screen');
   renderMain();
-  showToast('🎉 Welcome to Lumina, ' + name + '! Your 15 GB library is ready.', 'success');
+  showToast('🎉 Welcome to Ninaivugal, ' + name + '! Your 15 GB library is ready.', 'success');
 }
 
 /* ------------------------------------------------------------------
