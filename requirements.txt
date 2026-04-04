@@ -1,11 +1,7 @@
 Flask
-request
 joblib
-jsonify
 torch
-torch.nn
-torchvision
-Image
+PIL
 io
 base64
 numpy
