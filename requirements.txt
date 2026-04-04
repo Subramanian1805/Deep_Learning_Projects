@@ -1,0 +1,8 @@
+Flask, request, jsonify
+torch
+torch.nn as nn
+torchvision
+Image
+io
+base64
+numpy
