@@ -1,0 +1,3 @@
+0 Ring worm
+1 Cellulitis
+2 Atopic dermititis

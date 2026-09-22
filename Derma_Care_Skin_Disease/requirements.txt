@@ -1,0 +1,5 @@
+flask==3.0.3
+tensorflow>=2.16
+tf-keras>=2.16
+pillow>=10.3.0
+numpy>=1.26

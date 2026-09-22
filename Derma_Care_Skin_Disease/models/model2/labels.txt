@@ -1,0 +1,4 @@
+0 Scabis_Lyme
+1 Sebirrheic
+2 Acne_Rosacea
+3 Psoriasis

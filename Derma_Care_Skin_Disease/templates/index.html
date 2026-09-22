@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DermaCare — Skin Disease Detection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f4f8;
+  --white: #ffffff;
+  --primary: #1565c0;
+  --primary-light: #e3f2fd;
+  --accent: #00897b;
+  --accent-light: #e0f2f1;
+  --text: #1a2332;
+  --muted: #5a6a7e;
+  --border: #d0dbe8;
+  --danger: #c62828;
+  --danger-bg: #ffebee;
+  --warning: #e65100;
+  --warning-bg: #fff3e0;
+  --success: #2e7d32;
+  --success-bg: #e8f5e9;
+  --shadow: 0 2px 12px rgba(21,101,192,.08);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ---- Header ---- */
+.header {
+  background: linear-gradient(135deg, #1565c0 0%, #00897b 100%);
+  color: #fff;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+}
+.header-icon {
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,.2);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+.header h1 { font-size: 20px; font-weight: 700; }
+.header p { font-size: 13px; opacity: .85; margin-top: 2px; }
+
+.wrap { max-width: 860px; margin: 0 auto; padding: 28px 16px 48px; }
+
+/* ---- Cards ---- */
+.card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+}
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px; height: 18px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* ---- Tabs ---- */
+.tabs { display: flex; gap: 10px; margin-bottom: 0; }
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  background: #e8eef5;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+  transition: background .15s;
+}
+.tab.active { background: var(--white); color: var(--primary); font-weight: 600; border-color: var(--primary); }
+.tab-panel {
+  display: none;
+  border: 1px solid var(--border);
+  border-radius: 0 10px 10px 10px;
+  padding: 24px;
+  background: var(--white);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.tab-panel.active { display: block; }
+
+#dropzone {
+  border: 2px dashed var(--border);
+  border-radius: 10px;
+  padding: 36px 20px;
+  text-align: center;
+  color: var(--muted);
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  background: var(--primary-light);
+}
+#dropzone:hover, #dropzone.drag { border-color: var(--primary); color: var(--primary); background: #d0e8fc; }
+#dropzone svg { margin-bottom: 10px; }
+#preview, #video { max-width: 100%; border-radius: 10px; margin-top: 16px; display: none; border: 1px solid var(--border); }
+#video { width: 100%; background: #000; }
+
+.btn {
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--text);
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+}
+.btn:hover { background: var(--primary-light); }
+.btn:active { transform: scale(.98); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn-primary:hover { background: #1256a8; }
+.btn-accent { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-accent:hover { background: #00796b; }
+.row { display: flex; gap: 10px; align-items: center; margin-top: 16px; flex-wrap: wrap; }
+
+/* ---- Results ---- */
+#results { display: none; }
+#results.visible { display: block; }
+
+.result-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.disease-name { font-size: 26px; font-weight: 700; color: var(--text); }
+.confidence-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.badge-high { background: var(--success-bg); color: var(--success); }
+.badge-medium { background: var(--warning-bg); color: var(--warning); }
+.badge-low { background: var(--primary-light); color: var(--primary); }
+.badge-critical { background: var(--danger-bg); color: var(--danger); }
+
+.alert-banner {
+  background: var(--danger-bg);
+  border: 1px solid #ef9a9a;
+  border-radius: 10px;
+  padding: 14px 18px;
+  color: var(--danger);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+@media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } }
+
+.info-box {
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 16px;
+  border-left: 4px solid var(--accent);
+}
+.info-box h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); margin-bottom: 8px; }
+.info-box p { font-size: 14px; line-height: 1.6; }
+
+.section-title { font-size: 14px; font-weight: 600; color: var(--primary); margin: 20px 0 12px; }
+
+.stage-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 600px) { .stage-grid { grid-template-columns: 1fr; } }
+.stage-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--white);
+}
+.stage-card img { width: 100%; height: 120px; object-fit: cover; background: var(--primary-light); }
+.stage-card-body { padding: 12px; }
+.stage-card-body h4 { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 4px; }
+.stage-card-body p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+.alt-list { list-style: none; }
+.alt-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.alt-list li:last-child { border-bottom: none; }
+
+.score-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; font-size: 13px; }
+.score-bar-name { width: 160px; flex-shrink: 0; }
+.score-bar-track { flex: 1; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.score-bar-fill { height: 100%; background: var(--primary); border-radius: 4px; }
+.score-bar-pct { width: 44px; text-align: right; color: var(--muted); }
+
+.spinner {
+  display: inline-block;
+  width: 20px; height: 20px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.error-msg { color: var(--danger); font-size: 14px; margin-top: 10px; }
+.disclaimer {
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  margin-top: 8px;
+  line-height: 1.6;
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-icon">🏥</div>
+  <div>
+    <h1>DermaCare — Skin Analysis Portal</h1>
+    <p>AI-assisted skin condition screening · For awareness only — not a medical diagnosis</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- Input section -->
+  <div class="card">
+    <div class="card-title">Submit a Skin Image</div>
+    <div class="tabs">
+      <div class="tab active" data-tab="upload">📁 Upload Photo</div>
+      <div class="tab" data-tab="webcam">📷 Use Webcam</div>
+    </div>
+
+    <div class="tab-panel active" id="panel-upload">
+      <div id="dropzone">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#1565c0" stroke-width="1.5">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <div>Click to choose an image, or drag and drop here</div>
+        <div style="font-size:12px;margin-top:6px;color:#5a6a7e;">JPG, PNG, WEBP supported</div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" style="display:none;">
+      <img id="preview" alt="Preview">
+      <div class="row">
+        <button class="btn btn-primary" id="predictUploadBtn" disabled>Analyze Photo</button>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-webcam">
+      <video id="video" autoplay playsinline></video>
+      <canvas id="canvas" style="display:none;"></canvas>
+      <div class="row">
+        <button class="btn" id="startCamBtn">Start Camera</button>
+        <button class="btn btn-accent" id="captureBtn" disabled>Capture &amp; Analyze</button>
+      </div>
+    </div>
+    <div id="errorBox" class="error-msg"></div>
+  </div>
+
+  <!-- Results section -->
+  <div id="results">
+    <div class="card" id="resultCard">
+      <div id="melanomaAlert" class="alert-banner" style="display:none;">
+        ⚠️ <strong>Melanoma Alert:</strong> A potentially serious condition was detected. Please consult a dermatologist immediately.
+      </div>
+      <div class="result-header">
+        <div>
+          <div style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;">Detected Condition</div>
+          <div class="disease-name" id="rDisease">—</div>
+        </div>
+        <div class="confidence-badge badge-medium" id="rBadge">—</div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-box">
+          <h3>Confidence Level</h3>
+          <p id="rConfidence">—</p>
+        </div>
+        <div class="info-box">
+          <h3>Estimated Stage</h3>
+          <p id="rStage">—</p>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-bottom:16px;border-left-color:var(--primary);">
+        <h3>About This Condition</h3>
+        <p id="rDescription">—</p>
+      </div>
+
+      <div class="info-box" style="border-left-color:#e65100;">
+        <h3>Recommended Treatment (Informational)</h3>
+        <p id="rPrescription">—</p>
+      </div>
+
+      <div class="section-title">Disease Progression — Reference Stages</div>
+      <div class="stage-grid" id="rStages"></div>
+
+      <div class="section-title" id="altTitle" style="display:none;">Alternative Possibilities</div>
+      <ul class="alt-list" id="rAlternatives"></ul>
+
+      <details style="margin-top:20px;">
+        <summary style="cursor:pointer;font-size:13px;color:var(--muted);font-weight:500;">View all model scores</summary>
+        <div id="rAllScores" style="margin-top:12px;"></div>
+      </details>
+    </div>
+  </div>
+
+  <p class="disclaimer">
+    <strong>Medical Disclaimer:</strong> DermaCare is an AI screening tool for educational and awareness purposes only.
+    It is not a substitute for professional medical advice, diagnosis, or treatment.
+    Always seek the advice of a qualified dermatologist with questions about a medical condition.
+    Never disregard professional medical advice or delay in seeking it because of something you read here.
+  </p>
+</div>
+
+<script>
+const tabs = document.querySelectorAll('.tab');
+const panels = document.querySelectorAll('.tab-panel');
+tabs.forEach(t => t.onclick = () => {
+  tabs.forEach(x => x.classList.remove('active'));
+  panels.forEach(x => x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById('panel-' + t.dataset.tab).classList.add('active');
+  stopCamera();
+});
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const preview = document.getElementById('preview');
+const predictUploadBtn = document.getElementById('predictUploadBtn');
+let uploadedBlob = null;
+
+dropzone.onclick = () => fileInput.click();
+dropzone.ondragover = e => { e.preventDefault(); dropzone.classList.add('drag'); };
+dropzone.ondragleave = () => dropzone.classList.remove('drag');
+dropzone.ondrop = e => {
+  e.preventDefault(); dropzone.classList.remove('drag');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+};
+fileInput.onchange = () => { if (fileInput.files[0]) handleFile(fileInput.files[0]); };
+
+function handleFile(file) {
+  uploadedBlob = file;
+  preview.src = URL.createObjectURL(file);
+  preview.style.display = 'block';
+  predictUploadBtn.disabled = false;
+}
+predictUploadBtn.onclick = () => runPrediction(uploadedBlob);
+
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const startCamBtn = document.getElementById('startCamBtn');
+const captureBtn = document.getElementById('captureBtn');
+let stream = null;
+
+startCamBtn.onclick = async () => {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    video.srcObject = stream;
+    video.style.display = 'block';
+    captureBtn.disabled = false;
+    startCamBtn.textContent = 'Restart Camera';
+  } catch (err) {
+    showError('Could not access webcam: ' + err.message);
+  }
+};
+function stopCamera() {
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+    video.style.display = 'none';
+    captureBtn.disabled = true;
+    startCamBtn.textContent = 'Start Camera';
+  }
+}
+captureBtn.onclick = () => {
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  canvas.toBlob(blob => runPrediction(blob), 'image/jpeg', 0.92);
+};
+
+function showError(msg) {
+  document.getElementById('errorBox').textContent = msg;
+}
+
+async function runPrediction(blob) {
+  if (!blob) { showError('No image available yet.'); return; }
+  showError('');
+  const results = document.getElementById('results');
+  results.classList.add('visible');
+  document.getElementById('rDisease').innerHTML = '<span class="spinner"></span>Analyzing…';
+  document.getElementById('rBadge').textContent = '';
+  document.getElementById('rConfidence').textContent = '';
+  document.getElementById('rStage').textContent = '';
+  document.getElementById('rDescription').textContent = '';
+  document.getElementById('rPrescription').textContent = '';
+  document.getElementById('rStages').innerHTML = '';
+  document.getElementById('rAlternatives').innerHTML = '';
+  document.getElementById('rAllScores').innerHTML = '';
+  document.getElementById('melanomaAlert').style.display = 'none';
+
+  const form = new FormData();
+  form.append('image', blob, 'capture.jpg');
+  try {
+    const res = await fetch('/predict', { method: 'POST', body: form });
+    const data = await res.json();
+    if (!res.ok) {
+      showError(data.error || 'Prediction failed.');
+      results.classList.remove('visible');
+      return;
+    }
+    renderResults(data);
+  } catch (err) {
+    showError('Request failed: ' + err.message);
+    results.classList.remove('visible');
+  }
+}
+
+function badgeClass(severity) {
+  return { critical: 'badge-critical', high: 'badge-high', medium: 'badge-medium', low: 'badge-low' }[severity] || 'badge-low';
+}
+
+function renderResults(data) {
+  document.getElementById('rDisease').textContent = data.disease;
+  const badge = document.getElementById('rBadge');
+  badge.textContent = data.confidence + '% confidence';
+  badge.className = 'confidence-badge ' + badgeClass(data.severity_badge);
+
+  document.getElementById('rConfidence').textContent = data.confidence + '% — ' +
+    (data.confidence >= 75 ? 'High confidence match' : data.confidence >= 55 ? 'Moderate confidence' : 'Low confidence');
+  document.getElementById('rStage').textContent = data.stage;
+  document.getElementById('rDescription').textContent = data.description || 'No description available.';
+  document.getElementById('rPrescription').textContent = data.prescription || 'Consult a dermatologist for treatment guidance.';
+
+  if (data.melanoma_alert) {
+    document.getElementById('melanomaAlert').style.display = 'flex';
+  }
+
+  const stagesEl = document.getElementById('rStages');
+  if (data.stages && data.stages.length) {
+    stagesEl.innerHTML = data.stages.map(s => `
+      <div class="stage-card">
+        <img src="${s.image}" alt="${s.name} stage reference">
+        <div class="stage-card-body">
+          <h4>${s.name}</h4>
+          <p>${s.signs}</p>
+        </div>
+      </div>`).join('');
+  } else {
+    stagesEl.innerHTML = '<p style="font-size:13px;color:var(--muted);">No reference images available for this result.</p>';
+  }
+
+  const alts = data.alternatives || [];
+  const altTitle = document.getElementById('altTitle');
+  const altList = document.getElementById('rAlternatives');
+  if (alts.length) {
+    altTitle.style.display = 'block';
+    altList.innerHTML = alts.map(a =>
+      `<li><span>${a.disease}</span><span>${a.confidence}%</span></li>`
+    ).join('');
+  } else {
+    altTitle.style.display = 'none';
+    altList.innerHTML = '';
+  }
+
+  const scoresEl = document.getElementById('rAllScores');
+  if (data.all_scores) {
+    scoresEl.innerHTML = data.all_scores.map(s => `
+      <div class="score-bar-row">
+        <div class="score-bar-name">${s.disease}</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:${s.confidence}%"></div></div>
+        <div class="score-bar-pct">${s.confidence}%</div>
+      </div>`).join('');
+  }
+}
+</script>
+</body>
+</html>

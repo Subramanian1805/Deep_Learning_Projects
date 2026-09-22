@@ -1,0 +1,3 @@
+0 Melanoma
+1 Eczema
+2 Actinic keratosis
